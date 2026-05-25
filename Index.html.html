@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENAC - Controle de Entregas de Materiais</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        senac: {
+                            blue: '#004c97',    /* Azul Oficial Senac */
+                            orange: '#f7941d',  /* Laranja Oficial Senac */
+                            darkBlue: '#003366',
+                            lightBlue: '#e6f0fa',
+                            accent: '#ff9e22'
+                        },
+                        colab: {
+                            paulo: '#b91c1c',   /* Vermelho Forte - Paulo Henrique */
+                            alana: '#047857',   /* Verde Esmeralda Forte - Alana */
+                            katiuska: '#6d28d9' /* Roxo Forte - Katiuska */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Cabeçalho Minimalista Interno -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6 shadow-sm">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-100 p-2 rounded-xl flex items-center justify-center border border-slate-200">
+                    <span class="text-[#004c97] font-black text-xl tracking-tighter">S<span class="text-[#f7941d]">E</span>NAC</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-extrabold text-[#004c97] tracking-tight uppercase">Controle de Entregas</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wider">Gestão de Materiais Pedagógicos e Corporativos</p>
+                </div>
+            </div>
+            
+            <!-- Painel rápido de Colaboradores e suas Cores Fortes -->
+            <div class="flex flex-wrap gap-2 justify-center">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white bg-colab-paulo shadow-sm">
+                    <i class="fa-solid fa-user-tie"></i> Paulo Henrique
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white bg-colab-alana shadow-sm">
+                    <i class="fa-solid fa-laptop-code"></i> Alana
+                </span>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold text-white bg-colab-katiuska shadow-sm">
+                    <i class="fa-solid fa-briefcase"></i> Katiuska
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Área de Conteúdo Principal -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- COLUNA ESQUERDA: Formulário de Registro de Nova Entrega -->
+        <div class="lg:col-span-4 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <span class="text-[#f7941d] text-lg"><i class="fa-solid fa-circle-plus"></i></span>
+                <h2 class="text-base font-extrabold text-[#004c97] uppercase">Novo Lançamento</h2>
+            </div>
+
+            <form id="delivery-form" onsubmit="addDelivery(event)" class="space-y-4">
+                <!-- Nome do Material -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Material / Insumo</label>
+                    <input type="text" id="material-name" required placeholder="Ex: Apostila de Gastronomia, Kit de Facas" 
+                           class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#004c97] font-medium">
+                </div>
+
+                <!-- Quantidade -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Quantidade</label>
+                    <input type="number" id="material-qty" required min="1" placeholder="Quantidade" 
+                           class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#004c97] font-medium">
+                </div>
+
+                <!-- Colaborador Responsável -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Colaborador Destinatário</label>
+                    <select id="colab-select" required class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#004c97] font-bold bg-white">
+                        <option value="Paulo Henrique" class="text-colab-paulo font-bold">Paulo Henrique - Analista Pedagógico e DI</option>
+                        <option value="Alana" class="text-colab-alana font-bold">Alana - Analista Moodle</option>
+                        <option value="Katiuska" class="text-colab-katiuska font-bold">Katiuska - Analista Corporativo</option>
+                    </select>
+                </div>
+
+                <!-- Datas (Recebimento e Previsão) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Recebimento</label>
+                        <input type="date" id="received-date" required class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#004c97] font-medium">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Previsão Entrega</label>
+                        <input type="date" id="expected-date" required class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#004c97] font-medium">
+                    </div>
+                </div>
+
+                <!-- Botão de Submissão -->
+                <button type="submit" class="w-full py-3 bg-[#004c97] hover:bg-[#003366] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Agendar e Registrar
+                </button>
+            </form>
+        </div>
+
+        <!-- COLUNA DIREITA: Tabela e Visualização de Entregas -->
+        <div class="lg:col-span-8 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-[#004c97] text-lg"><i class="fa-solid fa-truck-ramp-box"></i></span>
+                    <h2 class="text-base font-extrabold text-[#004c97] uppercase">Painel de Entregas</h2>
+                </div>
+                <!-- Filtros Rápidos -->
+                <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 text-[10px] font-bold">
+                    <button onclick="filterDeliveries('todas')" id="filter-btn-todas" class="px-2.5 py-1 rounded-lg bg-white text-[#004c97] shadow-sm">Todas</button>
+                    <button onclick="filterDeliveries('pendentes')" id="filter-btn-pendentes" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800">Pendentes</button>
+                    <button onclick="filterDeliveries('entregues')" id="filter-btn-entregues" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800">Concluídas</button>
+                </div>
+            </div>
+
+            <!-- Tabela de Entregas Registradas -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 font-bold uppercase text-[9px] tracking-wider border-b border-slate-100">
+                            <th class="p-3">Material</th>
+                            <th class="p-3">Qtd.</th>
+                            <th class="p-3">Responsável</th>
+                            <th class="p-3">Datas</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deliveries-tbody" class="divide-y divide-slate-100 font-medium">
+                        <!-- Conteúdo Injetado Dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-12 space-y-3">
+                <i class="fa-solid fa-boxes-packing text-4xl text-slate-300"></i>
+                <p class="text-slate-400 text-xs font-semibold">Nenhuma entrega agendada ou correspondente ao filtro ativo.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé Minimalista Integrado -->
+    <footer class="max-w-6xl w-full mx-auto px-4 py-6 border-t border-slate-200 text-center text-[10px] text-slate-400">
+        &copy; 2026 SENAC. Sistema de controle de materiais, entregas e atribuição pedagógica/corporativa.
+    </footer>
+
+    <!-- Lógica de Operações do Sistema -->
+    <script>
+        // Dados iniciais para simulação
+        let deliveries = [
+            {
+                id: 1,
+                material: "Apostilas Práticas - Gastronomia II",
+                qty: 45,
+                colab: "Paulo Henrique",
+                receivedDate: "2026-05-20",
+                expectedDate: "2026-05-28",
+                status: "Pendente"
+            },
+            {
+                id: 2,
+                material: "Manuais de Configuração Moodle 4.3",
+                qty: 15,
+                colab: "Alana",
+                receivedDate: "2026-05-18",
+                expectedDate: "2026-05-24",
+                status: "Concluído"
+            },
+            {
+                id: 3,
+                material: "Kits Corporativos de Integração",
+                qty: 30,
+                colab: "Katiuska",
+                receivedDate: "2026-05-22",
+                expectedDate: "2026-06-02",
+                status: "Pendente"
+            }
+        ];
+
+        let activeFilter = 'todas';
+
+        // Mapeamento de cores fortes por colaborador
+        const colabColors = {
+            "Paulo Henrique": "bg-colab-paulo",
+            "Alana": "bg-colab-alana",
+            "Katiuska": "bg-colab-katiuska"
+        };
+
+        const colabRoles = {
+            "Paulo Henrique": "Analista Pedagógico e DI",
+            "Alana": "Analista Moodle",
+            "Katiuska": "Analista Corporativo"
+        };
+
+        // Adicionar Nova Entrega
+        function addDelivery(e) {
+            e.preventDefault();
+
+            const material = document.getElementById('material-name').value;
+            const qty = parseInt(document.getElementById('material-qty').value);
+            const colab = document.getElementById('colab-select').value;
+            const receivedDate = document.getElementById('received-date').value;
+            const expectedDate = document.getElementById('expected-date').value;
+
+            const newDelivery = {
+                id: Date.now(),
+                material,
+                qty,
+                colab,
+                receivedDate,
+                expectedDate,
+                status: "Pendente"
+            };
+
+            deliveries.unshift(newDelivery);
+            document.getElementById('delivery-form').reset();
+            renderDeliveries();
+        }
+
+        // Alternar o status da entrega
+        function toggleStatus(id) {
+            deliveries = deliveries.map(del => {
+                if (del.id === id) {
+                    return { ...del, status: del.status === "Pendente" ? "Concluído" : "Pendente" };
+                }
+                return del;
+            });
+            renderDeliveries();
+        }
+
+        // Eliminar um registro
+        function deleteDelivery(id) {
+            deliveries = deliveries.filter(del => del.id !== id);
+            renderDeliveries();
+        }
+
+        // Filtragem de registros
+        function filterDeliveries(filter) {
+            activeFilter = filter;
+            
+            // Atualizar classes dos botões de filtro
+            ['todas', 'pendentes', 'entregues'].forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (f === filter) {
+                    btn.className = "px-2.5 py-1 rounded-lg bg-white text-[#004c97] shadow-sm";
+                } else {
+                    btn.className = "px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800";
+                }
+            });
+
+            renderDeliveries();
+        }
+
+        // Formatação de datas legíveis
+        function formatDate(dateStr) {
+            const [year, month, day] = dateStr.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
+        // Renderizar a tabela de entregas
+        function renderDeliveries() {
+            const tbody = document.getElementById('deliveries-tbody');
+            const emptyState = document.getElementById('empty-state');
+            tbody.innerHTML = '';
+
+            // Filtrar itens
+            const filtered = deliveries.filter(del => {
+                if (activeFilter === 'pendentes') return del.status === 'Pendente';
+                if (activeFilter === 'entregues') return del.status === 'Concluído';
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(del => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition-all";
+
+                // Classe e ícone de status
+                const statusBadge = del.status === "Concluído" 
+                    ? `<span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-emerald-100"><i class="fa-solid fa-circle-check"></i> Entregue</span>`
+                    : `<span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-amber-100 animate-pulse"><i class="fa-solid fa-hourglass-half"></i> Aguardando</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-700">${del.material}</td>
+                    <td class="p-3 text-slate-500 font-bold">${del.qty}</td>
+                    <td class="p-3">
+                        <div class="space-y-0.5">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-bold text-white ${colabColors[del.colab]} shadow-sm">
+                                ${del.colab}
+                            </span>
+                            <p class="text-[9px] text-slate-400 pl-1">${colabRoles[del.colab]}</p>
+                        </div>
+                    </td>
+                    <td class="p-3 text-[11px] text-slate-500 space-y-0.5 font-semibold">
+                        <div><span class="text-slate-400 font-bold">Rec:</span> ${formatDate(del.receivedDate)}</div>
+                        <div><span class="text-[#004c97] font-bold">Prev:</span> ${formatDate(del.expectedDate)}</div>
+                    </td>
+                    <td class="p-3">${statusBadge}</td>
+                    <td class="p-3 text-right">
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button onclick="toggleStatus(${del.id})" title="Alternar Status" 
+                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                            </button>
+                            <button onclick="deleteDelivery(${del.id})" title="Remover Lançamento" 
+                                    class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Data de hoje padrão nos inputs de data
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('received-date').value = today;
+            document.getElementById('expected-date').value = today;
+            renderDeliveries();
+        };
+    </script>
+</body>
+</html>
